@@ -193,6 +193,7 @@ btn.innerText = "Generating...";
 
 
     } catch (error) {
+         const btn = document.getElementById("generateBtn");
 
         btn.disabled = false;
         btn.innerText = "Generate Loan Link";
@@ -201,7 +202,7 @@ btn.innerText = "Generating...";
 
         alert(error.message);
     }
-
+    };
 
 window.copyLink = function () {
 
