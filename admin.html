@@ -165,55 +165,64 @@ import {
     getDoc
 } from "./firebase.js";
 
-window.proceed = async function(){
+window.proceed = async function () {
 
-    const Pan =
-    document.getElementById("PanNumber").value.trim();
+    const btn = document.querySelector(".proceed-btn");
 
-    if(!/^\d{10}$/.test(pan)){
-        alert("Please enter a valid 10 digit PAN number");
+    const Pan = document
+        .getElementById("Pan")
+        .value
+        .trim()
+        .toUpperCase();
+
+    // Check PAN format
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(Pan)) {
+        alert("Please enter a valid PAN number like ABCDE1234F");
         return;
     }
-const btn = document.querySelector(".proceed-btn");
 
-btn.disabled = true;
-btn.innerText = "Please Wait...";
-    try{
+    btn.disabled = true;
+    btn.innerText = "Please Wait...";
 
-        const docRef =
-        doc(db, "policies", pan);
+    try {
 
-        const docSnap =
-        await getDoc(docRef);
+        const docRef = doc(db, "policies", Pan);
 
-        if(!docSnap.exists()){
+        const docSnap = await getDoc(docRef);
 
-            alert("Invalid Pan Number");
+        if (!docSnap.exists()) {
+
+            alert("Invalid PAN Number");
+
+            btn.disabled = false;
+            btn.innerText = "Proceed";
+
             return;
-
         }
 
         sessionStorage.setItem(
             "PanNumber",
-            pan
+            Pan
         );
-btn.disabled = false;
-btn.innerText = "Proceed";
 
-        window.location.href ="payment.html";
+        btn.disabled = false;
+        btn.innerText = "Proceed";
 
+        window.location.href = "payment.html";
 
     }
-    catch(error){
-btn.disabled = false;
-btn.innerText = "Proceed";
+    catch (error) {
 
-        console.error(error);
+        console.error("Firebase Error:", error);
+
+        btn.disabled = false;
+        btn.innerText = "Proceed";
+
         alert("Unable to verify PAN number");
 
     }
 
-}
+};
 
 </script>
 
