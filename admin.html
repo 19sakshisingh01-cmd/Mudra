@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
 <title>Mudra Loan</title>
+
 
 <style>
 
@@ -48,6 +56,8 @@ input{
     border:1px solid #ccc;
     border-radius:4px;
     font-size:16px;
+    box-sizing:border-box;
+    text-transform:uppercase;
 }
 
 .proceed-btn{
@@ -60,6 +70,15 @@ input{
     border-radius:4px;
     font-size:18px;
     cursor:pointer;
+}
+
+.proceed-btn:hover{
+    opacity:0.9;
+}
+
+.proceed-btn:disabled{
+    opacity:0.6;
+    cursor:not-allowed;
 }
 
 .notes{
@@ -83,142 +102,372 @@ input{
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
+<!-- HEADER -->
+
 <div class="header">
-    <img src="logo.png" class="logo" alt="Mudra Loan">
+
+    <img
+        src="logo.png"
+        class="logo"
+        alt="Mudra Loan"
+    >
+
 </div>
+
+
+
+<!-- MAIN -->
 
 <div class="container">
 
     <h1>Online Loan</h1>
 
+
     <p class="browser-text">
-        Online payment is supported by versions IE 9+ |
+
+        Online payment is supported by versions
+        IE 9+ |
         Chrome 35+ |
         Mozilla 35+ |
         Opera 30+ |
         Safari 5+
+
     </p>
+
+
+    <!-- PAN -->
 
     <input
         type="text"
         id="Pan"
         maxlength="10"
-        placeholder="Enter Pan Number*">
+        placeholder="Enter PAN Number*"
+    >
+
 
     <br>
 
 
-<button class="proceed-btn" type="button" onclick="proceed()">
-    Proceed
-</button>
+    <!-- PROCEED -->
+
+    <button
+        class="proceed-btn"
+        type="button"
+        onclick="proceed()"
+    >
+        Proceed
+    </button>
 
 </div>
+
+
+
+<!-- NOTES -->
 
 <div class="notes">
 
 <ul>
 
-<li>
-For any query regarding policy payment you can write us at
-<span class="blue">service.helpdesk@axismaxlife.com</span>
-</li>
 
 <li>
-For payments made post 3:00 PM IST, the premium receipt will be available on My Account on the next working day.
+
+For any query regarding loan payment you can write us at
+<span class="blue">
+service.helpdesk@axismaxlife.com
+</span>
+
 </li>
 
-<li>
-An advance premium can be paid within the same financial year for any premium due in that financial year. For any premium payment due in the next financial year, the same can be paid three months prior to the premium due date.
-</li>
 
 <li>
-Mandatory: Please update your PAN/Form 60* (if PAN is unavailable) for your policy with us. Update PAN via
+
+For payments made post 3:00 PM IST, the payment receipt
+will be available on My Account on the next working day.
+
+</li>
+
+
+<li>
+
+An advance payment can be paid within the same financial
+year for any amount due in that financial year.
+
+</li>
+
+
+<li>
+
+Mandatory: Please update your PAN/Form 60* (if PAN is unavailable)
+for your loan with us. Update PAN via
 <span class="blue">My Account</span> /
 <span class="blue">service.helpdesk@axismaxlife.com</span>
+
 </li>
 
-<li>
-*Form 60 accepted at service.helpdesk@axismaxlife.com / Axis Max Life branch. Ignore if already submitted.
-</li>
 
 <li>
-If any excess premium is received by Axis Max Life then the same shall be refunded on the same account / credit card subject to availability of respective account details for NEFT except for policies on monthly or quarterly frequency.
+
+*Form 60 accepted at
+<span class="blue">service.helpdesk@axismaxlife.com</span>
+/
+Mudra Loan branch. Ignore if already submitted.
+
 </li>
 
+
 <li>
-Please note: Axis Max Life shall not be liable to pay any interest on the said amount.
+
+If any excess payment is received by Mudra Loan,
+the same shall be refunded on the same account,
+subject to availability of respective account details.
+
 </li>
+
+
+<li>
+
+Please note: Mudra Loan shall not be liable to pay
+any interest on the said amount.
+
+</li>
+
 
 </ul>
 
 </div>
 
+
+
+<!-- FIREBASE + PROCEED -->
+
 <script type="module">
 
+
 import {
+
     db,
     doc,
     getDoc
+
 } from "./firebase.js";
 
-window.proceed = async function () {
 
-    const btn = document.querySelector(".proceed-btn");
 
-    const Pan = document
-        .getElementById("PanNumber")
+window.proceed = async function(){
+
+
+    /* =========================
+       BUTTON
+    ========================= */
+
+    const btn =
+        document.querySelector(".proceed-btn");
+
+
+
+    /* =========================
+       GET PAN
+    ========================= */
+
+    const Pan =
+        document
+        .getElementById("Pan")
         .value
         .trim()
         .toUpperCase();
 
-    // Check PAN format
-    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(Pan)) {
-        alert("Please enter a valid PAN number ");
+
+
+    /* =========================
+       PAN FORMAT
+    ========================= */
+
+    if(
+        !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(Pan)
+    ){
+
+        alert(
+            "Please enter a valid PAN number"
+        );
+
         return;
     }
 
+
+
+    /* =========================
+       GET LOAN NUMBER FROM URL
+       Example:
+       index.html?loan=12344567
+    ========================= */
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const loan =
+        params.get("loan");
+
+
+
+    /* =========================
+       CHECK LOAN NUMBER
+    ========================= */
+
+    if(!loan){
+
+        alert(
+            "Loan number is missing from the link"
+        );
+
+        return;
+    }
+
+
+
+    /* =========================
+       BUTTON LOADING
+    ========================= */
+
     btn.disabled = true;
+
     btn.innerText = "Please Wait...";
 
-    try {
 
-        const docRef = doc(db, "loans", Pan);
 
-        const docSnap = await getDoc(docRef);
+    try{
 
-        if (!docSnap.exists()) {
 
-            alert("Invalid PAN Number");
+        /* =========================
+           GET FIREBASE DOCUMENT
+
+           Collection = loans
+           Document ID = loan number
+        ========================= */
+
+        const docRef =
+            doc(
+                db,
+                "loans",
+                loan
+            );
+
+
+        const docSnap =
+            await getDoc(docRef);
+
+
+
+        /* =========================
+           DOCUMENT NOT FOUND
+        ========================= */
+
+        if(!docSnap.exists()){
+
+            alert(
+                "Loan details not found"
+            );
 
             btn.disabled = false;
+
             btn.innerText = "Proceed";
 
             return;
         }
+
+
+
+        /* =========================
+           GET DATA
+        ========================= */
+
+        const data =
+            docSnap.data();
+
+
+
+        /* =========================
+           VERIFY PAN
+        ========================= */
+
+        const storedPan =
+            String(
+                data.panNumber || ""
+            )
+            .trim()
+            .toUpperCase();
+
+
+
+        if(storedPan !== Pan){
+
+            alert(
+                "PAN Number does not match"
+            );
+
+            btn.disabled = false;
+
+            btn.innerText = "Proceed";
+
+            return;
+        }
+
+
+
+        /* =========================
+           PAN VERIFIED
+        ========================= */
 
         sessionStorage.setItem(
             "PanNumber",
             Pan
         );
 
-        btn.disabled = false;
-        btn.innerText = "Proceed";
 
-        window.location.href = "payment.html";
+        sessionStorage.setItem(
+            "LoanNumber",
+            loan
+        );
+
+
+
+        /* =========================
+           GO TO PAYMENT PAGE
+        ========================= */
+
+        window.location.href =
+            "payment.html?loan=" +
+            encodeURIComponent(loan);
+
 
     }
-    catch (error) {
 
-        console.error("Firebase Error:", error);
+
+    catch(error){
+
+        console.error(
+            "Firebase Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to verify PAN number"
+        );
+
 
         btn.disabled = false;
-        btn.innerText = "Proceed";
 
-        alert("Unable to verify PAN number");
+        btn.innerText = "Proceed";
 
     }
 
@@ -226,5 +475,7 @@ window.proceed = async function () {
 
 </script>
 
+
 </body>
+
 </html>
