@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mudra loan</title>
+
+<title>Mudra Loan</title>
 
 <style>
+
 body{
     font-family: Arial, sans-serif;
     background:#f5f5f5;
@@ -23,6 +26,8 @@ body{
 
 .logo{
     width:220px;
+    display:block;
+    margin:0 auto 20px auto;
 }
 
 h2{
@@ -43,6 +48,7 @@ input{
     border:1px solid #ccc;
     border-radius:5px;
     box-sizing:border-box;
+    font-size:16px;
 }
 
 button{
@@ -60,33 +66,96 @@ button{
 button:hover{
     opacity:0.9;
 }
+
+button:disabled{
+    opacity:0.6;
+    cursor:not-allowed;
+}
+
 </style>
+
 </head>
+
 
 <body>
 
-<div style="display:flex;justify-content:center;">
-    <img src="logo.png" class="logo">
-</div>
 
 <div class="container">
 
+<img src="logo.png" class="logo">
+
+
 <h2>Mudra Loan</h2>
 
-<label>Loan Number</label>
-<input type="text" id="LoanNumber" maxlength="9" placeholder="Enter Loan Number">
 
-<label>Pan Number</label>
-<input type="text" id="PanNumber" maxlength="10" placeholder="Enter Pan Number">
+<!-- Loan Number -->
 
-<label>Customer Name</label>
-<input type="text" id="customer" placeholder="Enter Customer Name">
+<label for="LoanNumber">
+    Loan Number
+</label>
 
-<label>Amount</label>
-<input type="number" id="amount" placeholder="Enter Amount">
+<input
+    type="text"
+    id="LoanNumber"
+    maxlength="9"
+    placeholder="Enter Loan Number"
+>
 
-<label>UPI ID</label>
-<input type="text" id="upi" placeholder="Enter UPI ID">
+
+<!-- PAN Number -->
+
+<label for="PanNumber">
+    PAN Number
+</label>
+
+<input
+    type="text"
+    id="PanNumber"
+    maxlength="10"
+    placeholder="Enter PAN Number"
+>
+
+
+<!-- Customer -->
+
+<label for="customer">
+    Customer Name
+</label>
+
+<input
+    type="text"
+    id="customer"
+    placeholder="Enter Customer Name"
+>
+
+
+<!-- Amount -->
+
+<label for="amount">
+    Amount
+</label>
+
+<input
+    type="number"
+    id="amount"
+    placeholder="Enter Amount"
+>
+
+
+<!-- UPI -->
+
+<label for="upi">
+    UPI ID
+</label>
+
+<input
+    type="text"
+    id="upi"
+    placeholder="Enter UPI ID"
+>
+
+
+<!-- Generate Button -->
 
 <button
     id="generateBtn"
@@ -96,6 +165,8 @@ button:hover{
     Generate Loan Link
 </button>
 
+
+<!-- Generated Link -->
 
 <label for="generatedLink">
     Generated Link
@@ -109,120 +180,277 @@ button:hover{
 >
 
 
+<!-- Copy Button -->
+
 <button
+    id="copyBtn"
     type="button"
     onclick="copyLink()"
 >
     Copy Link
 </button>
 
+
 </div>
+
 
 <script type="module">
 
 import {
     db,
     doc,
-    getDoc
+    setDoc
 } from "./firebase.js";
 
 
-window.proceed = async function () {
 
-    const Pan = document
-        .getElementById("Pan")
+/* =========================
+   GENERATE LOAN LINK
+========================= */
+
+window.generateLink = async function(){
+
+    const btn =
+        document.getElementById("generateBtn");
+
+
+    /* Get values */
+
+    const loan =
+        document
+        .getElementById("LoanNumber")
+        .value
+        .trim();
+
+
+    const Pan =
+        document
+        .getElementById("PanNumber")
         .value
         .trim()
         .toUpperCase();
 
 
-    // Check PAN format
-    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(Pan)) {
+    const customer =
+        document
+        .getElementById("customer")
+        .value
+        .trim();
 
-        alert("Please enter a valid PAN number");
+
+    const amount =
+        document
+        .getElementById("amount")
+        .value
+        .trim();
+
+
+    const upi =
+        document
+        .getElementById("upi")
+        .value
+        .trim();
+
+
+    /* =========================
+       REQUIRED FIELD CHECK
+    ========================= */
+
+    if(
+        !loan ||
+        !Pan ||
+        !customer ||
+        !amount ||
+        !upi
+    ){
+
+        alert("Please fill all fields");
 
         return;
     }
 
 
-    // Get loan number from URL
-    const params = new URLSearchParams(window.location.search);
+    /* =========================
+       PAN CHECK
+    ========================= */
 
-    const loan = params.get("loan");
+    if(
+        !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(Pan)
+    ){
 
-
-    if (!loan) {
-
-        alert("Loan number is missing from the link");
+        alert(
+            "PAN Number must be in format ABCDE1234F"
+        );
 
         return;
     }
 
 
-    try {
+    /* =========================
+       AMOUNT CHECK
+    ========================= */
 
-        const btn = document.querySelector(".proceed-btn");
+    if(
+        Number(amount) <= 0
+    ){
 
-        btn.disabled = true;
-        btn.innerText = "Checking...";
+        alert("Please enter a valid amount");
 
-
-        // Get loan document from Firebase
-        const loanRef = doc(db, "loans", loan);
-
-        const loanSnap = await getDoc(loanRef);
-
-
-        if (!loanSnap.exists()) {
-
-            alert("Loan details not found");
-
-            btn.disabled = false;
-            btn.innerText = "Proceed";
-
-            return;
-        }
+        return;
+    }
 
 
-        const data = loanSnap.data();
+    /* =========================
+       BUTTON LOADING
+    ========================= */
+
+    btn.disabled = true;
+
+    btn.innerText = "Generating...";
 
 
-        // Check PAN
-        if (data.panNumber !== Pan) {
-
-            alert("PAN Number does not match");
-
-            btn.disabled = false;
-            btn.innerText = "Proceed";
-
-            return;
-        }
+    try{
 
 
-        // PAN matched
-        alert("PAN verified successfully");
+        /* =========================
+           SAVE TO FIREBASE
+        ========================= */
+
+        await setDoc(
+
+            doc(
+                db,
+                "loans",
+                loan
+            ),
+
+            {
+
+                loanNumber: loan,
+
+                panNumber: Pan,
+
+                customer: customer,
+
+                amount: Number(amount),
+
+                upi: upi
+
+            }
+
+        );
 
 
-        // Next page
-        window.location.href =
-            "payment.html?loan=" +
+        /* =========================
+           CREATE CUSTOMER LINK
+        ========================= */
+
+        const link =
+            window.location.origin +
+            "/admin.html?loan=" +
             encodeURIComponent(loan);
 
 
-    } catch (error) {
+        /* =========================
+           SHOW LINK
+        ========================= */
+
+        document
+            .getElementById("generatedLink")
+            .value = link;
+
+
+        console.log(
+            "Loan Link Generated Successfully"
+        );
+
+
+        alert(
+            "Loan link generated successfully!"
+        );
+
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Firebase Error:",
+            error
+        );
+
+
+        alert(
+            "Error: " + error.message
+        );
+
+    }
+
+
+    finally{
+
+        /* Always restore button */
+
+        btn.disabled = false;
+
+        btn.innerText =
+            "Generate Loan Link";
+
+    }
+
+};
+
+
+
+/* =========================
+   COPY LINK
+========================= */
+
+window.copyLink = async function(){
+
+    const link =
+        document
+        .getElementById("generatedLink");
+
+
+    if(!link.value){
+
+        alert(
+            "Generate link first"
+        );
+
+        return;
+    }
+
+
+    try{
+
+        await navigator
+            .clipboard
+            .writeText(link.value);
+
+
+        alert(
+            "Link copied successfully!"
+        );
+
+
+    }
+
+    catch(error){
 
         console.error(error);
 
-        alert(error.message);
+        alert(
+            "Unable to copy link"
+        );
 
-        const btn = document.querySelector(".proceed-btn");
-
-        btn.disabled = false;
-        btn.innerText = "Proceed";
     }
 
 };
 
 </script>
+
+
 </body>
 </html>
