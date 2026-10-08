@@ -141,7 +141,18 @@ button:disabled{
     placeholder="Enter Amount"
 >
 
+<!-- Loan Date -->
 
+<label for="Loandate">
+    Loan Date
+</label>
+
+<input
+    type="date"
+    id="Loandate"
+    maxlength="10"
+    placeholder="Enter Loan Date"
+>
 <!-- UPI -->
 
 <label for="upi">
@@ -244,7 +255,10 @@ window.generateLink = async function(){
         .value
         .trim();
 
+    const loanDate =
+    document.getElementById("Loandate").value.trim();
 
+    
     const upi =
         document
         .getElementById("upi")
@@ -261,6 +275,7 @@ window.generateLink = async function(){
         !Pan ||
         !customer ||
         !amount ||
+        !loanDate ||
         !upi
     ){
 
