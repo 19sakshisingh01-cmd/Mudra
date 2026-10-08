@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Payment Details</title>
+<title>Mudra Loan - Payment Details</title>
 
 <style>
 
@@ -13,12 +13,15 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial,sans-serif;
+    font-family:Arial, sans-serif;
 }
 
 body{
     background:#f5f5f5;
+    color:#222;
 }
+
+/* HEADER */
 
 .header{
     background:white;
@@ -32,60 +35,84 @@ body{
     max-width:90%;
 }
 
+/* MAIN */
+
 .container{
     max-width:700px;
-    margin:30px auto;
-    padding:20px;
+    margin:35px auto;
+    padding:0 20px;
     text-align:center;
 }
 
+/* VERIFIED */
+
 .verified{
-    font-size:20px;
+    font-size:22px;
     font-weight:bold;
     margin-bottom:25px;
     color:#222;
 }
 
-.qr{
-    width:220px;
-    height:220px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    background:white;
-    padding:10px;
-    object-fit:contain;
+/* LOADING */
+
+.loading{
+    font-size:18px;
+    margin:30px 0;
 }
+
+/* DETAILS BOX */
 
 .details{
-    margin-top:25px;
-    line-height:2.2;
-    font-size:20px;
     background:white;
-    padding:20px;
+    padding:25px;
     border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
 }
 
+/* EACH DETAIL */
+
 .detail-row{
-    margin-bottom:8px;
+    margin:18px 0;
+    font-size:21px;
+    line-height:1.5;
 }
 
 .label{
     font-weight:bold;
 }
 
+/* COPY BUTTON */
+
 .copy-btn{
     padding:7px 14px;
-    background:#004b93;
+    margin-left:8px;
+    background:#0054a6;
     color:white;
     border:none;
     border-radius:5px;
     cursor:pointer;
-    margin-left:8px;
+    font-size:15px;
 }
 
 .copy-btn:hover{
     opacity:0.9;
 }
+
+/* QR */
+
+.qr{
+    width:240px;
+    height:240px;
+    margin:30px auto 10px;
+    padding:10px;
+    background:white;
+    border:1px solid #ddd;
+    border-radius:10px;
+    object-fit:contain;
+    display:none;
+}
+
+/* BUTTONS */
 
 .pay-btn{
     width:320px;
@@ -94,10 +121,14 @@ body{
     margin-top:25px;
     border:none;
     border-radius:6px;
-    background:#3cc5f3;
+    background:#34c4ef;
     color:white;
-    font-size:20px;
+    font-size:22px;
     cursor:pointer;
+}
+
+.pay-btn:hover{
+    opacity:0.9;
 }
 
 .back-btn{
@@ -109,20 +140,35 @@ body{
     border-radius:6px;
     background:white;
     color:#3699f5;
-    font-size:20px;
+    font-size:22px;
     cursor:pointer;
 }
 
-.loading{
-    font-size:18px;
-    margin-top:20px;
-    color:#555;
+.back-btn:hover{
+    background:#f5faff;
 }
 
-.error{
-    color:red;
-    font-size:18px;
-    margin-top:20px;
+/* MOBILE */
+
+@media(max-width:600px){
+
+    .container{
+        margin-top:25px;
+    }
+
+    .verified{
+        font-size:19px;
+    }
+
+    .detail-row{
+        font-size:18px;
+    }
+
+    .qr{
+        width:210px;
+        height:210px;
+    }
+
 }
 
 </style>
@@ -150,28 +196,30 @@ body{
 
 <div class="container">
 
-
     <div class="verified">
         ✔ Verified Business: Mudra Loan
     </div>
 
 
+    <!-- LOADING -->
+
     <div
         id="loading"
         class="loading"
     >
-        Loading Loan Details...
+        Loading Payment Details...
     </div>
 
 
     <!-- DETAILS -->
 
     <div
-        class="details"
         id="detailsBox"
+        class="details"
         style="display:none;"
     >
 
+        <!-- CUSTOMER -->
 
         <div class="detail-row">
 
@@ -185,17 +233,21 @@ body{
         </div>
 
 
+        <!-- PAN -->
+
         <div class="detail-row">
 
             <span class="label">
                 PAN Number:
             </span>
 
-            <span id="PanNumber">
+            <span id="panNumber">
             </span>
 
         </div>
 
+
+        <!-- LOAN NUMBER -->
 
         <div class="detail-row">
 
@@ -203,11 +255,13 @@ body{
                 Loan Number:
             </span>
 
-            <span id="LoanNumber">
+            <span id="loanNumber">
             </span>
 
         </div>
 
+
+        <!-- AMOUNT -->
 
         <div class="detail-row">
 
@@ -220,6 +274,8 @@ body{
 
         </div>
 
+
+        <!-- UPI -->
 
         <div class="detail-row">
 
@@ -241,6 +297,8 @@ body{
         </div>
 
 
+        <!-- LOAN DATE -->
+
         <div class="detail-row">
 
             <span class="label">
@@ -253,15 +311,25 @@ body{
         </div>
 
 
+        <!-- QR CODE -->
+
+        <img
+            id="qrCode"
+            class="qr"
+            alt="UPI Payment QR Code"
+        >
+
     </div>
 
 
-    <!-- PAYMENT AREA -->
+    <!-- PAY NOW -->
 
     <button
+        id="payBtn"
         class="pay-btn"
         type="button"
-        onclick="showPaymentMessage()"
+        onclick="payNow()"
+        style="display:none;"
     >
         Pay Now
     </button>
@@ -280,11 +348,11 @@ body{
         Back
     </button>
 
-
 </div>
 
 
-<!-- FIREBASE SCRIPT -->
+
+<!-- FIREBASE -->
 
 <script type="module">
 
@@ -295,27 +363,26 @@ import {
 } from "./firebase.js";
 
 
-/* ================================
+/* ---------------------------------
    GET LOAN NUMBER FROM URL
-================================ */
+---------------------------------- */
 
 const params =
     new URLSearchParams(
         window.location.search
     );
 
-
 const loan =
     params.get("loan");
 
 
-/* ================================
+/* ---------------------------------
    CHECK LOAN NUMBER
-================================ */
+---------------------------------- */
 
 if(!loan){
 
-    alert("Loan number is missing from the link");
+    alert("Loan number is missing.");
 
     window.location.href =
         "index.html";
@@ -323,209 +390,241 @@ if(!loan){
 }
 
 
-/* ================================
-   FETCH LOAN DATA
-================================ */
+/* ---------------------------------
+   LOAD LOAN DATA
+---------------------------------- */
 
-try{
+async function loadLoanDetails(){
+
+    try{
+
+        const loanRef =
+            doc(
+                db,
+                "loans",
+                loan
+            );
 
 
-    console.log(
-        "Fetching loan:",
-        loan
-    );
+        const loanSnap =
+            await getDoc(loanRef);
 
 
-    const loanRef =
-        doc(
-            db,
-            "loans",
-            loan
+        /* ---------------------------
+           DOCUMENT NOT FOUND
+        ---------------------------- */
+
+        if(!loanSnap.exists()){
+
+            document.getElementById(
+                "loading"
+            ).innerText =
+                "Loan details not found.";
+
+            alert(
+                "Loan details not found."
+            );
+
+            return;
+        }
+
+
+        /* ---------------------------
+           GET FIREBASE DATA
+        ---------------------------- */
+
+        const data =
+            loanSnap.data();
+
+
+        console.log(
+            "Loan Data:",
+            data
         );
 
 
-    const loanSnap =
-        await getDoc(
-            loanRef
+        /* ---------------------------
+           CUSTOMER
+        ---------------------------- */
+
+        document.getElementById(
+            "customerName"
+        ).innerText =
+            data.customer || "-";
+
+
+        /* ---------------------------
+           PAN
+        ---------------------------- */
+
+        document.getElementById(
+            "panNumber"
+        ).innerText =
+            data.panNumber || "-";
+
+
+        /* ---------------------------
+           LOAN NUMBER
+        ---------------------------- */
+
+        document.getElementById(
+            "loanNumber"
+        ).innerText =
+            data.loanNumber || loan;
+
+
+        /* ---------------------------
+           AMOUNT
+        ---------------------------- */
+
+        document.getElementById(
+            "amount"
+        ).innerText =
+            data.amount || "0";
+
+
+        /* ---------------------------
+           UPI
+        ---------------------------- */
+
+        document.getElementById(
+            "upiId"
+        ).innerText =
+            data.upi || "-";
+
+
+        /* ---------------------------
+           LOAN DATE
+        ---------------------------- */
+
+        document.getElementById(
+            "loanDate"
+        ).innerText =
+            data.loanDate || "Date not available";
+
+
+        /* ---------------------------
+           CREATE UPI STRING
+        ---------------------------- */
+
+        if(data.upi && data.amount){
+
+            const upiString =
+                "upi://pay" +
+                "?pa=" +
+                encodeURIComponent(data.upi) +
+                "&pn=" +
+                encodeURIComponent(
+                    data.customer || "Mudra Loan"
+                ) +
+                "&am=" +
+                encodeURIComponent(data.amount) +
+                "&cu=INR";
+
+
+            console.log(
+                "UPI String:",
+                upiString
+            );
+
+
+            /* ---------------------------
+               QR CODE
+            ---------------------------- */
+
+            const qr =
+                document.getElementById(
+                    "qrCode"
+                );
+
+
+            qr.src =
+                "https://api.qrserver.com/v1/create-qr-code/" +
+                "?size=300x300&data=" +
+                encodeURIComponent(
+                    upiString
+                );
+
+
+            qr.onload =
+                function(){
+
+                    qr.style.display =
+                        "block";
+
+                };
+
+
+            qr.onerror =
+                function(){
+
+                    console.error(
+                        "QR code could not be loaded."
+                    );
+
+                };
+
+
+            /* ---------------------------
+               SAVE UPI FOR PAY NOW
+            ---------------------------- */
+
+            window.paymentUPI =
+                upiString;
+
+        }
+
+
+        /* ---------------------------
+           SHOW DETAILS
+        ---------------------------- */
+
+        document.getElementById(
+            "loading"
+        ).style.display =
+            "none";
+
+
+        document.getElementById(
+            "detailsBox"
+        ).style.display =
+            "block";
+
+
+        document.getElementById(
+            "payBtn"
+        ).style.display =
+            "inline-block";
+
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Firebase Error:",
+            error
         );
 
-
-    /* ================================
-       DOCUMENT NOT FOUND
-    ================================ */
-
-    if(!loanSnap.exists()){
 
         document.getElementById(
             "loading"
         ).innerText =
-            "Loan details not found.";
+            "Unable to load loan details.";
 
-        throw new Error(
-            "Loan document does not exist."
+
+        alert(
+            "Unable to fetch loan details."
         );
 
     }
 
-
-    /* ================================
-       GET FIREBASE DATA
-    ================================ */
-
-    const data =
-        loanSnap.data();
-
-
-    console.log(
-        "Loan data:",
-        data
-    );
-
-
-    /* ================================
-       CUSTOMER
-    ================================ */
-
-    document.getElementById(
-        "customerName"
-    ).innerText =
-        data.customer || "N/A";
-
-
-    /* ================================
-       PAN
-    ================================ */
-
-    document.getElementById(
-        "PanNumber"
-    ).innerText =
-        data.panNumber || "N/A";
-
-
-    /* ================================
-       LOAN NUMBER
-    ================================ */
-
-    document.getElementById(
-        "LoanNumber"
-    ).innerText =
-        data.loanNumber || loan;
-
-
-    /* ================================
-       AMOUNT
-    ================================ */
-
-    document.getElementById(
-        "amount"
-    ).innerText =
-        data.amount || "0";
-
-
-    /* ================================
-       UPI
-    ================================ */
-
-    document.getElementById(
-        "upiId"
-    ).innerText =
-        data.upi || "N/A";
-
-
-    /* ================================
-       DATE
-    ================================ */
-
-    const dateElement =
-        document.getElementById(
-            "loanDate"
-        );
-
-
-    if(data.date){
-
-        /*
-         If Firebase date is a Timestamp
-        */
-
-        if(
-            typeof data.date.toDate ===
-            "function"
-        ){
-
-            dateElement.innerText =
-                data.date
-                    .toDate()
-                    .toLocaleDateString(
-                        "en-IN"
-                    );
-
-        }
-
-        /*
-         If date is a normal string
-        */
-
-        else{
-
-            dateElement.innerText =
-                data.date;
-
-        }
-
-    }
-
-    else{
-
-        dateElement.innerText =
-            "Date not available";
-
-    }
-
-
-    /* ================================
-       SHOW DETAILS
-    ================================ */
-
-    document.getElementById(
-        "loading"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "detailsBox"
-    ).style.display =
-        "block";
-
-
 }
 
 
-/* ================================
-   ERROR
-================================ */
-
-catch(error){
-
-    console.error(
-        "Firebase Error:",
-        error
-    );
-
-
-    document.getElementById(
-        "loading"
-    ).innerText =
-        "Unable to fetch loan details.";
-
-
-}
-
-
-/* ================================
+/* ---------------------------------
    COPY UPI
-================================ */
+---------------------------------- */
 
 window.copyUPI =
 function(){
@@ -536,65 +635,83 @@ function(){
         ).innerText;
 
 
-    if(
-        !upi ||
-        upi === "N/A"
-    ){
+    if(!upi || upi === "-"){
 
         alert(
-            "UPI ID is not available"
+            "UPI ID not available."
         );
 
         return;
-
     }
 
 
     navigator.clipboard
         .writeText(upi)
-        .then(function(){
+        .then(
+            function(){
 
-            alert(
-                "UPI ID Copied"
-            );
+                alert(
+                    "UPI ID Copied"
+                );
 
-        })
-        .catch(function(){
+            }
+        )
+        .catch(
+            function(){
 
-            alert(
-                "Unable to copy UPI ID"
-            );
+                alert(
+                    "Unable to copy UPI ID."
+                );
 
-        });
+            }
+        );
 
 };
 
 
-/* ================================
-   PAY BUTTON
-================================ */
+/* ---------------------------------
+   PAY NOW
+---------------------------------- */
 
-window.showPaymentMessage =
+window.payNow =
 function(){
 
-    alert(
-        "Payment processing is not configured on this page."
-    );
+    if(!window.paymentUPI){
+
+        alert(
+            "Payment details are not available."
+        );
+
+        return;
+    }
+
+
+    /* Open UPI payment app */
+
+    window.location.href =
+        window.paymentUPI;
 
 };
 
 
-/* ================================
+/* ---------------------------------
    BACK BUTTON
-================================ */
+---------------------------------- */
 
 window.goBack =
 function(){
 
     window.location.href =
-        "admin.html";
+        "index.html";
 
 };
+
+
+/* ---------------------------------
+   START
+---------------------------------- */
+
+loadLoanDetails();
 
 </script>
 
