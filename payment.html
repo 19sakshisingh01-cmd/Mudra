@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Payment Details</title>
 
 <style>
@@ -27,11 +29,13 @@ body{
 
 .logo{
     width:240px;
+    max-width:90%;
 }
 
 .container{
     max-width:700px;
     margin:30px auto;
+    padding:20px;
     text-align:center;
 }
 
@@ -39,6 +43,7 @@ body{
     font-size:20px;
     font-weight:bold;
     margin-bottom:25px;
+    color:#222;
 }
 
 .qr{
@@ -48,122 +53,238 @@ body{
     border-radius:10px;
     background:white;
     padding:10px;
+    object-fit:contain;
 }
 
 .details{
     margin-top:25px;
     line-height:2.2;
-    font-size:22px;
-}
-
-.copy-btn{
-    padding:8px 15px;
-    background:#004b93;
-    color:white;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-    margin-left:10px;
-}
-
-.pay-btn{
-    width:320px;
-    padding:15px;
-    margin-top:25px;
-    border:none;
-    border-radius:6px;
-    background:#3cc5f3;
-    color:white;
-    font-size:22px;
-    cursor:pointer;
-}
-
-.back-btn{
-    width:320px;
-    padding:15px;
-    margin-top:15px;
-    border:2px solid #3c9ef9;
-    border-radius:6px;
+    font-size:20px;
     background:white;
-    color:#3699f5;
-    font-size:22px;
-    cursor:pointer;
+    padding:20px;
+    border-radius:10px;
+}
+
+.detail-row{
+    margin-bottom:8px;
 }
 
 .label{
     font-weight:bold;
 }
 
+.copy-btn{
+    padding:7px 14px;
+    background:#004b93;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    margin-left:8px;
+}
+
+.copy-btn:hover{
+    opacity:0.9;
+}
+
+.pay-btn{
+    width:320px;
+    max-width:100%;
+    padding:15px;
+    margin-top:25px;
+    border:none;
+    border-radius:6px;
+    background:#3cc5f3;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.back-btn{
+    width:320px;
+    max-width:100%;
+    padding:15px;
+    margin-top:15px;
+    border:2px solid #3c9ef9;
+    border-radius:6px;
+    background:white;
+    color:#3699f5;
+    font-size:20px;
+    cursor:pointer;
+}
+
 .loading{
+    font-size:18px;
+    margin-top:20px;
+    color:#555;
+}
+
+.error{
+    color:red;
     font-size:18px;
     margin-top:20px;
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
+<!-- HEADER -->
+
 <div class="header">
-    <img src="logo.png" class="logo">
+
+    <img
+        src="logo.png"
+        class="logo"
+        alt="Mudra Loan"
+    >
+
 </div>
 
+
+<!-- MAIN -->
+
 <div class="container">
+
 
     <div class="verified">
         ✔ Verified Business: Mudra Loan
     </div>
 
-    <div id="loading" class="loading">
-        Loading Payment Details...
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        Loading Loan Details...
     </div>
 
-    <img id="qrCode" class="qr" alt="QR Code" style="display:none;">
 
-    <div class="details" id="detailsBox" style="display:none;">
+    <!-- DETAILS -->
 
-        <div>
-            <span class="label">Customer:</span>
-            <span id="customerName"></span>
+    <div
+        class="details"
+        id="detailsBox"
+        style="display:none;"
+    >
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                Customer:
+            </span>
+
+            <span id="customerName">
+            </span>
+
         </div>
 
-        <div>
-            <span class="label">UPI ID:</span>
-            <span id="upiId"></span>
 
-            <button class="copy-btn" type="button" onclick="copyUPI()">
+        <div class="detail-row">
+
+            <span class="label">
+                PAN Number:
+            </span>
+
+            <span id="PanNumber">
+            </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                Loan Number:
+            </span>
+
+            <span id="LoanNumber">
+            </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                Amount:
+            </span>
+
+            ₹<span id="amount">
+            </span>
+
+        </div>
+
+
+        <div class="detail-row">
+
+            <span class="label">
+                UPI ID:
+            </span>
+
+            <span id="upiId">
+            </span>
+
+            <button
+                class="copy-btn"
+                type="button"
+                onclick="copyUPI()"
+            >
                 Copy
             </button>
-        </div>  
 
-        <div>
-            <span class="label">Pan Number:</span>
-            <span id="PanNumber"></span>
         </div>
 
-        <div>
-            <span class="label">Loan Number:</span>
-            <span id="LoanNumber"></span>
+
+        <div class="detail-row">
+
+            <span class="label">
+                Date:
+            </span>
+
+            <span id="loanDate">
+            </span>
+
         </div>
 
-        <div>
-            <span class="label">Amount:</span>
-            ₹<span id="amount"></span>
-        </div>
 
     </div>
 
-    <button class="pay-btn" type="button" onclick="payNow()">
+
+    <!-- PAYMENT AREA -->
+
+    <button
+        class="pay-btn"
+        type="button"
+        onclick="showPaymentMessage()"
+    >
         Pay Now
     </button>
 
+
     <br>
 
-    <button class="back-btn" type="button" onclick="goBack()">
+
+    <!-- BACK -->
+
+    <button
+        class="back-btn"
+        type="button"
+        onclick="goBack()"
+    >
         Back
     </button>
 
+
 </div>
+
+
+<!-- FIREBASE SCRIPT -->
 
 <script type="module">
 
@@ -173,95 +294,311 @@ import {
     getDoc
 } from "./firebase.js";
 
-const policyNumber =
-sessionStorage.getItem("policyNumber");
 
-if(!policyNumber){
-    window.location.href = "index.html";
+/* ================================
+   GET LOAN NUMBER FROM URL
+================================ */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const loan =
+    params.get("loan");
+
+
+/* ================================
+   CHECK LOAN NUMBER
+================================ */
+
+if(!loan){
+
+    alert("Loan number is missing from the link");
+
+    window.location.href =
+        "index.html";
+
 }
+
+
+/* ================================
+   FETCH LOAN DATA
+================================ */
 
 try{
 
-    const docRef =
-    doc(db,"policies",policyNumber);
 
-    const docSnap =
-    await getDoc(docRef);
+    console.log(
+        "Fetching loan:",
+        loan
+    );
 
-    if(!docSnap.exists()){
-        alert("Pan Number Not Found");
-        window.location.href="index.html";
+
+    const loanRef =
+        doc(
+            db,
+            "loans",
+            loan
+        );
+
+
+    const loanSnap =
+        await getDoc(
+            loanRef
+        );
+
+
+    /* ================================
+       DOCUMENT NOT FOUND
+    ================================ */
+
+    if(!loanSnap.exists()){
+
+        document.getElementById(
+            "loading"
+        ).innerText =
+            "Loan details not found.";
+
+        throw new Error(
+            "Loan document does not exist."
+        );
+
     }
 
+
+    /* ================================
+       GET FIREBASE DATA
+    ================================ */
+
     const data =
-    docSnap.data();
+        loanSnap.data();
 
-    document.getElementById("customerName").innerText =
-    data.customer;
 
-    document.getElementById("Loan").innerText =
-    data.loan;
+    console.log(
+        "Loan data:",
+        data
+    );
 
-    document.getElementById("panNumber").innerText =
-    data.Pan;
 
-    document.getElementById("amount").innerText =
-    data.amount;
+    /* ================================
+       CUSTOMER
+    ================================ */
 
-    document.getElementById("upiId").innerText =
-    data.upi;
+    document.getElementById(
+        "customerName"
+    ).innerText =
+        data.customer || "N/A";
 
-    const upiString =
-    `upi://pay?pa=${data.upi}&pn=${encodeURIComponent(data.customer)}&am=${data.amount}&cu=INR`;
 
-    document.getElementById("qrCode").src =
-    "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" +
-    encodeURIComponent(upiString);
+    /* ================================
+       PAN
+    ================================ */
 
-    document.getElementById("loading").style.display="none";
-    document.getElementById("detailsBox").style.display="block";
-    document.getElementById("qrCode").style.display="inline-block";
+    document.getElementById(
+        "PanNumber"
+    ).innerText =
+        data.panNumber || "N/A";
+
+
+    /* ================================
+       LOAN NUMBER
+    ================================ */
+
+    document.getElementById(
+        "LoanNumber"
+    ).innerText =
+        data.loanNumber || loan;
+
+
+    /* ================================
+       AMOUNT
+    ================================ */
+
+    document.getElementById(
+        "amount"
+    ).innerText =
+        data.amount || "0";
+
+
+    /* ================================
+       UPI
+    ================================ */
+
+    document.getElementById(
+        "upiId"
+    ).innerText =
+        data.upi || "N/A";
+
+
+    /* ================================
+       DATE
+    ================================ */
+
+    const dateElement =
+        document.getElementById(
+            "loanDate"
+        );
+
+
+    if(data.date){
+
+        /*
+         If Firebase date is a Timestamp
+        */
+
+        if(
+            typeof data.date.toDate ===
+            "function"
+        ){
+
+            dateElement.innerText =
+                data.date
+                    .toDate()
+                    .toLocaleDateString(
+                        "en-IN"
+                    );
+
+        }
+
+        /*
+         If date is a normal string
+        */
+
+        else{
+
+            dateElement.innerText =
+                data.date;
+
+        }
+
+    }
+
+    else{
+
+        dateElement.innerText =
+            "Date not available";
+
+    }
+
+
+    /* ================================
+       SHOW DETAILS
+    ================================ */
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "detailsBox"
+    ).style.display =
+        "block";
+
 
 }
+
+
+/* ================================
+   ERROR
+================================ */
+
 catch(error){
 
-    console.error(error);
+    console.error(
+        "Firebase Error:",
+        error
+    );
 
-    alert("Unable to fetch policy details");
 
-}
+    document.getElementById(
+        "loading"
+    ).innerText =
+        "Unable to fetch loan details.";
 
-window.copyUPI = function(){
-
-    const upi =
-    document.getElementById("upiId").innerText;
-
-    navigator.clipboard.writeText(upi);
-
-    alert("UPI ID Copied");
 
 }
 
-window.payNow = function(){
+
+/* ================================
+   COPY UPI
+================================ */
+
+window.copyUPI =
+function(){
 
     const upi =
-    document.getElementById("upiId").innerText;
+        document.getElementById(
+            "upiId"
+        ).innerText;
 
-    const amount =
-    document.getElementById("amount").innerText;
+
+    if(
+        !upi ||
+        upi === "N/A"
+    ){
+
+        alert(
+            "UPI ID is not available"
+        );
+
+        return;
+
+    }
+
+
+    navigator.clipboard
+        .writeText(upi)
+        .then(function(){
+
+            alert(
+                "UPI ID Copied"
+            );
+
+        })
+        .catch(function(){
+
+            alert(
+                "Unable to copy UPI ID"
+            );
+
+        });
+
+};
+
+
+/* ================================
+   PAY BUTTON
+================================ */
+
+window.showPaymentMessage =
+function(){
+
+    alert(
+        "Payment processing is not configured on this page."
+    );
+
+};
+
+
+/* ================================
+   BACK BUTTON
+================================ */
+
+window.goBack =
+function(){
 
     window.location.href =
-    `upi://pay?pa=${upi}&pn=AxisMax&am=${amount}&cu=INR`;
+        "admin.html";
 
-}
-
-window.goBack = function(){
-
-    window.location.href="index.html";
-
-}
+};
 
 </script>
 
+
 </body>
+
 </html>
