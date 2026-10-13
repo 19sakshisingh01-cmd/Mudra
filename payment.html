@@ -500,8 +500,9 @@ async function loadLoanDetails(){
            LOAN DATE
         ---------------------------- */
 
-       document.getElementById("loanDate").innerText =
-    data.loandate || "Date not available";
+       
+        document.getElementById("loanDate").innerText =
+    data.loanDate || data.loandate || "Date not available";
 
         /* ---------------------------
            CREATE UPI STRING
