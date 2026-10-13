@@ -263,7 +263,7 @@ window.generateLink = async function(){
         .trim();
 
     const loanDate =
-    document.getElementById("Loandate").value.;
+    document.getElementById("Loandate").value.trim();
 
     
     const upi =
@@ -355,7 +355,7 @@ window.generateLink = async function(){
                 customer: customer,
 
                 amount: Number(amount),
-
+                LoanDate: loandate,
                 upi: upi
 
             }
