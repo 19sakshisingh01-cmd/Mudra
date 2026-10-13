@@ -246,227 +246,79 @@ any interest on the said amount.
 
 <!-- FIREBASE + PROCEED -->
 
+
 <script type="module">
+import { db, doc, getDoc } from "./firebase.js";
 
+window.proceed = async function () {
+    const btn = document.querySelector(".proceed-btn");
 
-import {
-
-    db,
-    doc,
-    getDoc
-
-} from "./firebase.js";
-
-
-
-window.proceed = async function(){
-
-
-    /* =========================
-       BUTTON
-    ========================= */
-
-    const btn =
-        document.querySelector(".proceed-btn");
-
-
-
-    /* =========================
-       GET PAN
-    ========================= */
-
-    const Pan =
-        document
+    const Pan = document
         .getElementById("Pan")
         .value
         .trim()
         .toUpperCase();
 
-
-
-    /* =========================
-       PAN FORMAT
-    ========================= */
-
-    if(
-        !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(Pan)
-    ){
-
-        alert(
-            "Please enter a valid PAN number"
-        );
-
+    // Validate PAN format
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(Pan)) {
+        alert("Please enter a valid PAN number");
         return;
     }
 
+    // Get loan number from URL
+    const params = new URLSearchParams(window.location.search);
+    const loan = params.get("loan");
 
-
-    /* =========================
-       GET LOAN NUMBER FROM URL
-       Example:
-       index.html?loan=12344567
-    ========================= */
-
- sessionStorage.setItem("LoanNumber", loan);
-
-window.location.href =
-    "https://mudraloan03.vercel.app/payment.html?loan=" +
-    encodeURIComponent(loan);
-
-
-    /* =========================
-       CHECK LOAN NUMBER
-    ========================= */
-
-    if(!loan){
-
-        alert(
-            "Loan number is missing from the link"
-        );
-
+    // Check whether loan number exists
+    if (!loan) {
+        alert("Loan number is missing from the link");
         return;
     }
-
-
-
-    /* =========================
-       BUTTON LOADING
-    ========================= */
 
     btn.disabled = true;
-
     btn.innerText = "Please Wait...";
 
+    try {
+        // Fetch loan details from Firestore
+        const docRef = doc(db, "loans", loan);
+        const docSnap = await getDoc(docRef);
 
-
-    try{
-
-
-        /* =========================
-           GET FIREBASE DOCUMENT
-
-           Collection = loans
-           Document ID = loan number
-        ========================= */
-
-        const docRef =
-            doc(
-                db,
-                "loans",
-                loan
-            );
-
-
-        const docSnap =
-            await getDoc(docRef);
-
-
-
-        /* =========================
-           DOCUMENT NOT FOUND
-        ========================= */
-
-        if(!docSnap.exists()){
-
-            alert(
-                "Loan details not found"
-            );
-
-            btn.disabled = false;
-
-            btn.innerText = "Proceed";
-
+        if (!docSnap.exists()) {
+            alert("Loan details not found");
             return;
         }
 
+        const data = docSnap.data();
 
-
-        /* =========================
-           GET DATA
-        ========================= */
-
-        const data =
-            docSnap.data();
-
-
-
-        /* =========================
-           VERIFY PAN
-        ========================= */
-
-        const storedPan =
-            String(
-                data.panNumber || ""
-            )
+        // Verify entered PAN against stored PAN
+        const storedPan = String(data.panNumber || "")
             .trim()
             .toUpperCase();
 
-
-
-        if(storedPan !== Pan){
-
-            alert(
-                "PAN Number does not match"
-            );
-
-            btn.disabled = false;
-
-            btn.innerText = "Proceed";
-
+        if (storedPan !== Pan) {
+            alert("PAN Number does not match");
             return;
         }
 
+        // Save verified details for this session
+        sessionStorage.setItem("PanNumber", Pan);
+        sessionStorage.setItem("LoanNumber", loan);
 
+        // Go to payment page only after successful verification
+        window.location.href =
+            "https://mudraloan03.vercel.app/payment.html?loan=" +
+            encodeURIComponent(loan);
 
-        /* =========================
-           PAN VERIFIED
-        ========================= */
-
-        sessionStorage.setItem(
-            "PanNumber",
-            Pan
-        );
-
-
-        sessionStorage.setItem(
-            "LoanNumber",
-            loan
-        );
-
-
-
-        /* =========================
-           GO TO PAYMENT PAGE
-        ========================= */
-
-       "https://mudraloan03.vercel.app/payment.html?loan=" + encodeURIComponent(loan)
-
-
-    }
-
-
-    catch(error){
-
-        console.error(
-            "Firebase Error:",
-            error
-        );
-
-
-        alert(
-            "Unable to verify PAN number"
-        );
-
-
+    } catch (error) {
+        console.error("Verification error:", error);
+        alert("Unable to verify PAN number. Please try again.");
+    } finally {
         btn.disabled = false;
-
         btn.innerText = "Proceed";
-
     }
-
 };
-
 </script>
+
 
 
 </body>
