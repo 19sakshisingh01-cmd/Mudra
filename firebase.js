@@ -20,7 +20,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
-
 window.db = db;
 window.doc = doc;
 window.setDoc = setDoc;
