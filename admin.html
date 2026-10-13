@@ -307,15 +307,11 @@ window.proceed = async function(){
        index.html?loan=12344567
     ========================= */
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+ sessionStorage.setItem("LoanNumber", loan);
 
-
-    const loan =
-        params.get("loan");
-
+window.location.href =
+    "https://mudraloan03.vercel.app/payment.html?loan=" +
+    encodeURIComponent(loan);
 
 
     /* =========================
